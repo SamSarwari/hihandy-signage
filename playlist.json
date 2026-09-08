@@ -1,11 +1,26 @@
 {
-  "version": "2.0.0",
-  "updated_at": "2026-09-08T11:52:00Z",
+  "version": "3.0.0",
+  "updated_at": "2026-09-08T13:42:00Z",
   "poll_interval_seconds": 60,
-  "landscape": {
-    "video": "videos/HIHANDY_USER_LOOP_ROTATED_90.mp4"
-  },
-  "portrait": {
-    "video": "videos/HIHANDY_USER_LOOP_PORTRAIT.mp4"
+  "default_content": "clips",
+  "modes": {
+    "clips": {
+      "name": "Originale Videos (SDR)",
+      "video_90": "videos/HIHANDY_USER_LOOP_ROTATED_90.mp4",
+      "video_270": "videos/HIHANDY_USER_LOOP_ROTATED_270.mp4",
+      "video_portrait": "videos/HIHANDY_USER_LOOP_PORTRAIT.mp4"
+    },
+    "anim": {
+      "name": "HI-HANDY Animationen",
+      "video_90": "videos/HIHANDY_ANIMATION_LOOP_ROTATED_90.mp4",
+      "video_270": "videos/HIHANDY_ANIMATION_LOOP_ROTATED_270.mp4",
+      "video_portrait": "videos/HIHANDY_ANIMATION_LOOP_PORTRAIT.mp4"
+    },
+    "all": {
+      "name": "Kombi-Loop",
+      "video_90": "videos/HIHANDY_ALL_COMBINED_ROTATED_90.mp4",
+      "video_270": "videos/HIHANDY_ALL_COMBINED_ROTATED_270.mp4",
+      "video_portrait": "videos/HIHANDY_USER_LOOP_PORTRAIT.mp4"
+    }
   }
 }
