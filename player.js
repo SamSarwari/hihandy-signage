@@ -1,31 +1,17 @@
-// HI-HANDY Signage Player - Tizen 4.0 / Legacy WebKit Compatible
+// HI-HANDY Signage Player - Clean Fullscreen (No Badges)
 (function () {
   'use strict';
 
   var video = document.getElementById('player');
   var videoSource = document.getElementById('video-source');
-  var statusBadge = document.getElementById('status-badge');
-  var bannerBar = document.getElementById('banner-bar');
-
   var currentVideoSrc = '';
 
   var ROT_MODES = [
-    { key: '90', name: 'Querformat 90° (Rechts gekippt)', src: 'videos/HIHANDY_USER_LOOP_ROTATED_90.mp4' },
-    { key: '270', name: 'Querformat 270° (Links gekippt)', src: 'videos/HIHANDY_USER_LOOP_ROTATED_270.mp4' },
-    { key: '0', name: 'Normales Hochformat', src: 'videos/HIHANDY_USER_LOOP_PORTRAIT.mp4' }
+    { key: '90', src: 'videos/HIHANDY_USER_LOOP_ROTATED_90.mp4' },
+    { key: '270', src: 'videos/HIHANDY_USER_LOOP_ROTATED_270.mp4' },
+    { key: '0', src: 'videos/HIHANDY_USER_LOOP_PORTRAIT.mp4' }
   ];
   var currentModeIndex = 0;
-
-  function showStatus(text, duration) {
-    if (!duration) duration = 4000;
-    if (statusBadge) {
-      statusBadge.textContent = text;
-      statusBadge.classList.remove('fade-out');
-      setTimeout(function () {
-        statusBadge.classList.add('fade-out');
-      }, duration);
-    }
-  }
 
   function getUrlParam(name) {
     var query = window.location.search.substring(1);
@@ -37,7 +23,7 @@
     return null;
   }
 
-  function setVideoSource(newSrc, label) {
+  function setVideoSource(newSrc) {
     if (currentVideoSrc === newSrc) return;
     currentVideoSrc = newSrc;
     if (videoSource) {
@@ -51,15 +37,12 @@
         playPromise.catch(function () {});
       }
     }
-    if (label) {
-      showStatus('⚡ ' + label);
-    }
   }
 
   function cycleRotation() {
     currentModeIndex = (currentModeIndex + 1) % ROT_MODES.length;
     var mode = ROT_MODES[currentModeIndex];
-    setVideoSource(mode.src, mode.name);
+    setVideoSource(mode.src);
   }
 
   function ensurePlay() {
@@ -79,7 +62,7 @@
     }
   }, 4000);
 
-  // Switch rotation mode with remote control buttons (arrow keys, 0, 1, 2, or double click)
+  // Switch rotation mode with remote control buttons
   window.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === ' ' || e.keyCode === 39 || e.keyCode === 37) {
       cycleRotation();
@@ -103,10 +86,10 @@
   } else if (rotParam === '0' || rotParam === 'portrait') {
     currentModeIndex = 2;
   } else {
-    currentModeIndex = 0; // Default: 90 deg clockwise (rotates portrait content into landscape 1920x1080)
+    currentModeIndex = 0;
   }
 
   var initial = ROT_MODES[currentModeIndex];
-  setVideoSource(initial.src, 'HI-HANDY Schaufenster • ' + initial.name);
+  setVideoSource(initial.src);
   ensurePlay();
 })();

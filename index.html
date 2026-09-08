@@ -40,42 +40,9 @@
       object-fit: cover;
       background: #000;
     }
-    #status-badge {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(0, 229, 255, 0.4);
-      color: #00e5ff;
-      padding: 10px 18px;
-      border-radius: 9999px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      z-index: 99;
-      opacity: 1;
-      transition: opacity 1.5s ease-out;
-      pointer-events: none;
-      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-    }
-    #status-badge.fade-out {
-      opacity: 0;
-    }
-    #banner-bar {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(220, 38, 38, 0.95);
-      color: #fff;
-      font-size: 26px;
-      font-weight: 800;
-      padding: 16px 24px;
-      text-align: center;
-      z-index: 100;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    /* Alle Overlays komplett ausblenden für 100% cleanes Vollbild */
+    #status-badge, #banner-bar, #debug-log {
+      display: none !important;
     }
   </style>
 </head>
@@ -83,12 +50,8 @@
   <div class="video-container">
     <video id="player" autoplay loop muted playsinline preload="auto">
       <source id="video-source" src="videos/HIHANDY_USER_LOOP_ROTATED_90.mp4" type="video/mp4">
-      Dein Browser unterstützt kein Video.
     </video>
   </div>
-
-  <div id="status-badge">⚡ HI-HANDY Signage • Lädt...</div>
-  <div id="banner-bar"></div>
 
   <script src="player.js"></script>
 </body>
