@@ -77,33 +77,18 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-    #debug-log {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.85);
-      color: #f87171;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 12px;
-      z-index: 200;
-      max-width: 80%;
-    }
   </style>
 </head>
 <body>
   <div class="video-container">
     <video id="player" autoplay loop muted playsinline preload="auto">
-      <source id="video-source" src="videos/HIHANDY_MASTER_LOOP_PORTRAIT.mp4" type="video/mp4">
+      <source id="video-source" src="videos/HIHANDY_USER_LOOP_ROTATED_90.mp4" type="video/mp4">
       Dein Browser unterstützt kein Video.
     </video>
   </div>
 
   <div id="status-badge">⚡ HI-HANDY Signage • Lädt...</div>
   <div id="banner-bar"></div>
-  <div id="debug-log"></div>
 
   <script src="player.js"></script>
 </body>

@@ -6,19 +6,15 @@
   var videoSource = document.getElementById('video-source');
   var statusBadge = document.getElementById('status-badge');
   var bannerBar = document.getElementById('banner-bar');
-  var debugLog = document.getElementById('debug-log');
 
   var currentVideoSrc = '';
-  var currentConfig = null;
 
-  // Global error handler to help diagnose any TV browser issues
-  window.onerror = function (msg, url, line) {
-    if (debugLog) {
-      debugLog.style.display = 'block';
-      debugLog.innerHTML = 'JS Error (Z. ' + line + '): ' + msg;
-    }
-    return false;
-  };
+  var ROT_MODES = [
+    { key: '90', name: 'Querformat 90° (Rechts gekippt)', src: 'videos/HIHANDY_USER_LOOP_ROTATED_90.mp4' },
+    { key: '270', name: 'Querformat 270° (Links gekippt)', src: 'videos/HIHANDY_USER_LOOP_ROTATED_270.mp4' },
+    { key: '0', name: 'Normales Hochformat', src: 'videos/HIHANDY_USER_LOOP_PORTRAIT.mp4' }
+  ];
+  var currentModeIndex = 0;
 
   function showStatus(text, duration) {
     if (!duration) duration = 4000;
@@ -31,18 +27,17 @@
     }
   }
 
-  function getOrientation() {
-    var query = window.location.search;
-    if (query.indexOf('mode=landscape') !== -1 || query.indexOf('orientation=landscape') !== -1) {
-      return 'landscape';
+  function getUrlParam(name) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      if (pair[0] === name) return pair[1];
     }
-    if (query.indexOf('mode=portrait') !== -1 || query.indexOf('orientation=portrait') !== -1) {
-      return 'portrait';
-    }
-    return window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+    return null;
   }
 
-  function setVideoSource(newSrc) {
+  function setVideoSource(newSrc, label) {
     if (currentVideoSrc === newSrc) return;
     currentVideoSrc = newSrc;
     if (videoSource) {
@@ -53,47 +48,20 @@
       video.load();
       var playPromise = video.play();
       if (playPromise && playPromise.catch) {
-        playPromise.catch(function (err) {
-          console.warn('Autoplay deferred:', err);
-          showStatus('⚡ Klicke mit der Fernbedienung zum Starten');
-        });
+        playPromise.catch(function () {});
       }
+    }
+    if (label) {
+      showStatus('⚡ ' + label);
     }
   }
 
-  function checkPlaylist() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'playlist.json?_t=' + new Date().getTime(), true);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200 || xhr.status === 0) {
-          try {
-            var config = JSON.parse(xhr.responseText);
-            var orientation = getOrientation();
-            var targetVideo = (config && config[orientation]) ? config[orientation].video : null;
-
-            if (config && config.emergency_banner && config.emergency_banner.active) {
-              bannerBar.textContent = config.emergency_banner.text || '';
-              bannerBar.style.display = 'block';
-            } else if (bannerBar) {
-              bannerBar.style.display = 'none';
-            }
-
-            if (targetVideo) {
-              setVideoSource(targetVideo);
-            }
-
-            showStatus('⚡ HI-HANDY Signage • ' + orientation.toUpperCase() + ' (' + window.innerWidth + 'x' + window.innerHeight + ')');
-          } catch (e) {
-            console.error('JSON Parse error', e);
-          }
-        }
-      }
-    };
-    xhr.send();
+  function cycleRotation() {
+    currentModeIndex = (currentModeIndex + 1) % ROT_MODES.length;
+    var mode = ROT_MODES[currentModeIndex];
+    setVideoSource(mode.src, mode.name);
   }
 
-  // Ensure playback starts immediately
   function ensurePlay() {
     if (video) {
       video.muted = true;
@@ -104,27 +72,41 @@
     }
   }
 
-  // Watchdog: Restart if ever paused
+  // Watchdog
   setInterval(function () {
     if (video && video.paused) {
       ensurePlay();
     }
   }, 4000);
 
-  // User click / remote button press handler
-  window.addEventListener('click', ensurePlay);
-  window.addEventListener('keydown', ensurePlay);
+  // Switch rotation mode with remote control buttons (arrow keys, 0, 1, 2, or double click)
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === ' ' || e.keyCode === 39 || e.keyCode === 37) {
+      cycleRotation();
+    } else {
+      ensurePlay();
+    }
+  });
 
-  // Initialize
-  var initialOrientation = getOrientation();
-  var defaultSrc = initialOrientation === 'landscape' 
-    ? 'videos/HIHANDY_MASTER_LOOP_LANDSCAPE.mp4' 
-    : 'videos/HIHANDY_MASTER_LOOP_PORTRAIT.mp4';
+  window.addEventListener('dblclick', function () {
+    cycleRotation();
+  });
 
-  setVideoSource(defaultSrc);
+  window.addEventListener('click', function () {
+    ensurePlay();
+  });
+
+  // Determine initial rotation from URL param if given
+  var rotParam = getUrlParam('rot') || getUrlParam('rotation') || getUrlParam('mode');
+  if (rotParam === '270' || rotParam === 'ccw') {
+    currentModeIndex = 1;
+  } else if (rotParam === '0' || rotParam === 'portrait') {
+    currentModeIndex = 2;
+  } else {
+    currentModeIndex = 0; // Default: 90 deg clockwise (rotates portrait content into landscape 1920x1080)
+  }
+
+  var initial = ROT_MODES[currentModeIndex];
+  setVideoSource(initial.src, 'HI-HANDY Schaufenster • ' + initial.name);
   ensurePlay();
-  checkPlaylist();
-
-  // Poll for changes every 60s
-  setInterval(checkPlaylist, 60000);
 })();

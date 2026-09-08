@@ -1,16 +1,11 @@
 {
-  "version": "1.0.0",
-  "updated_at": "2026-09-08T11:22:00Z",
+  "version": "2.0.0",
+  "updated_at": "2026-09-08T11:52:00Z",
   "poll_interval_seconds": 60,
-  "default_orientation": "auto",
-  "portrait": {
-    "video": "videos/HIHANDY_MASTER_LOOP_PORTRAIT.mp4"
-  },
   "landscape": {
-    "video": "videos/HIHANDY_MASTER_LOOP_LANDSCAPE.mp4"
+    "video": "videos/HIHANDY_USER_LOOP_ROTATED_90.mp4"
   },
-  "emergency_banner": {
-    "active": false,
-    "text": ""
+  "portrait": {
+    "video": "videos/HIHANDY_USER_LOOP_PORTRAIT.mp4"
   }
 }
